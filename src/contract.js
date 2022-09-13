@@ -2,6 +2,7 @@ import { NearBindgen, NearPromise, near, call, view, bytes, assert } from 'near-
 import { PublicKey } from 'near-sdk-js/lib/types'
 
 const GLUE_ID = 'dev-1663003785845-27921924996527'
+const SUFFIX = 7
 
 @NearBindgen({})
 class HelloNear {
@@ -10,7 +11,7 @@ class HelloNear {
   deploy({ }) {
     assert(near.attachedDeposit() >= BigInt('20000000000000000000000000'), "not enough deposit")
     let signer = near.signerAccountId()
-    let subaccount = signer.substring(0, signer.length - 7) + GLUE_ID
+    let subaccount = signer.substring(0, signer.length - SUFFIX) + GLUE_ID
     let promise = NearPromise.new(subaccount)
 
     // possible promise actions, choose and chain what you need:
@@ -24,7 +25,7 @@ class HelloNear {
   @call({})
   createToken({ tokenName, supply, decimals, canMint, canBurn, symbol }) {
     let signer = near.signerAccountId()
-    let subaccount = signer.substring(0, signer.length - 7) + GLUE_ID
+    let subaccount = signer.substring(0, signer.length - SUFFIX) + GLUE_ID
     let promise = NearPromise.new(subaccount)
 
     promise.functionCall('new', JSON.stringify({
@@ -37,7 +38,7 @@ class HelloNear {
       },
       can_mint: canMint,
       can_burn: canBurn,
-      glue_id: 'dev-1663003785845-27921924996527',
+      glue_id: GLUE_ID,
     }), '0', '5000000000000')
     return promise
   }
@@ -45,7 +46,7 @@ class HelloNear {
   @call({})
   ft_transfer({ receiver_id, amount }) {
     let signer = near.signerAccountId()
-    let subaccount = signer.substring(0, signer.length - 7) + GLUE_ID
+    let subaccount = signer.substring(0, signer.length - SUFFIX) + GLUE_ID
     let promise = NearPromise.new(subaccount)
 
     promise.functionCall('ft_transfer', JSON.stringify({
